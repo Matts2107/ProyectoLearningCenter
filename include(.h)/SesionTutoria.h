@@ -28,7 +28,17 @@ public:
     bool getEstado() const { return esta_finalizada; }
     double getDuracion() const { return duracion_horas; }
     
-    void imprimirRecibo(); // Se implementará en el .cpp
+    void imprimirRecibo(); //*(read) Se implementará en el .cpp
+    // --- GETTERS (Para el 'Read' del Estudiante) ---
+// Necesitas saber quién es el estudiante para filtrar la lista
+std::shared_ptr<Persona> getEstudiante() const { return estudiante_ptr; }
+std::shared_ptr<Persona> getTutor() const { return tutor_ptr; }
+std::shared_ptr<Materia> getMateria() const { return materia_ptr; }
+std::string getFecha() const { return fecha; }
+
+// --- SETTERS (Para el 'Update' del Estudiante) ---
+// El estudiante debe poder cambiar la fecha/hora
+void setFecha(std::string _nuevaFecha) { fecha = _nuevaFecha; }
 };
 
 #endif

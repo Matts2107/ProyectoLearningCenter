@@ -14,7 +14,7 @@ void menuModulo1(SistemaLearningCenter& sistema);
 void menuModulo2(SistemaLearningCenter& sistema); 
 void menuModulo3(SistemaLearningCenter& sistema); 
 
-int main() {
+int main() {    
     // Instancia única del sistema. Todos los módulos trabajarán sobre esta misma variable.
     SistemaLearningCenter sistema;
     int opcionModulo;
@@ -138,7 +138,7 @@ void menuModulo1(SistemaLearningCenter& sistema) {
         
         if(opcion != 0) {
             cout << "\nPresione Enter para continuar...";
-            cin.ignore(); // Pausa estética
+            cin.ignore(); // Pausa estética de ENTER
         }
 
     } while (opcion != 0);

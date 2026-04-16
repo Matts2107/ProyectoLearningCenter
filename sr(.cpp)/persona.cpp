@@ -1,22 +1,18 @@
-#include "persona.h"
-#include <iostream>
-#include <string>
+#include "Persona.h"
 
-using namespace std;
-
-// Implementación del constructor
-// Nota: No implementamos mostrarPerfil() aquí porque es virtual pura (=0)
-Persona::Persona(string _nombre, string _id, string _correo) 
+// Constructor: Asigna los valores iniciales
+Persona::Persona(std::string _nombre, std::string _id, std::string _correo) 
     : nombre(_nombre), id_banner(_id), correo(_correo) {}
 
-// Implementación de los getters
-string Persona::getIdBanner() const { 
-    return id_banner; 
+// Retorna el ID (Banner)
+std::string Persona::getIdBanner() const {
+    return id_banner;
 }
 
-string Persona::getNombre() const { 
-    return nombre; 
+// Retorna el nombre completo
+std::string Persona::getNombre() const {
+    return nombre;
 }
 
-// El destructor virtual puede quedarse vacío pero debe estar definido
+// Destructor virtual: Necesario para que las clases hijas se borren bien
 Persona::~Persona() {}

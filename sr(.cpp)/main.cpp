@@ -14,7 +14,7 @@ void menuModulo1(SistemaLearningCenter& sistema);
 void menuModulo2(SistemaLearningCenter& sistema); 
 void menuModulo3(SistemaLearningCenter& sistema); 
 
-int main() {
+int main() {    
     // Instancia única del sistema. Todos los módulos trabajarán sobre esta misma variable.
     SistemaLearningCenter sistema;
     int opcionModulo;

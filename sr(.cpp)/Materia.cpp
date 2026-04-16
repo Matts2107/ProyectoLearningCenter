@@ -1,14 +1,25 @@
 #include "Materia.h"
-#include <iostream>
-#include <iomanip>
 
-using namespace std;
+// Constructor
+Materia::Materia(std::string _nombre, std::string _codigo, double _mult) 
+    : nombre(_nombre), codigo(_codigo), multiplicador(_mult) {}
 
-Materia::Materia(string _nombre, string _codigo, double _mult)
-    : nombre_materia(_nombre), codigo_materia(_codigo), multiplicador(_mult) {}
-
-void Materia::mostrarDatos() const {
-    cout << "  > [" << codigo_materia << "] " 
-        << left << setw(20) << nombre_materia 
-        << " | Mult: " << multiplicador << endl;
+// Retorna el nombre de la materia
+std::string Materia::getNombre() const {
+    return nombre;
 }
+
+// Retorna el código (ID) de la materia
+std::string Materia::getCodigo() const {
+    return codigo;
+}
+
+// Imprime los datos en pantalla
+void Materia::mostrarDatos() const {
+    std::cout << "Materia: " << nombre 
+            << " | ID: " << codigo 
+            << " | Dificultad/Mult: " << multiplicador << std::endl;
+}
+
+// Destructor
+Materia::~Materia() {}

@@ -138,7 +138,7 @@ void menuModulo1(SistemaLearningCenter& sistema) {
         
         if(opcion != 0) {
             cout << "\nPresione Enter para continuar...";
-            cin.ignore(); // Pausa estética
+            cin.ignore(); // Pausa estética de ENTER
         }
 
     } while (opcion != 0);

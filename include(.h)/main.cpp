@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <memory>
+#include <vector>
 #include "SistemaLearningCenter.h"
 #include "Estudiante.h"
 #include "Tutor.h"
@@ -8,16 +9,14 @@
 using namespace std;
 
 // --- PROTOTIPOS DE FUNCIONES ---
-// Esto permite que el main sea limpio y las funciones estén abajo
+// Declaramos las funciones aquí para que el main sepa que existen.
 void menuModulo1(SistemaLearningCenter& sistema);
-void menuModulo2(SistemaLearningCenter& sistema); // Espacio para tu compañero
-void menuModulo3(SistemaLearningCenter& sistema); // Espacio para tu compañero
+void menuModulo2(SistemaLearningCenter& sistema); 
+void menuModulo3(SistemaLearningCenter& sistema); 
 
 int main() {
-    // El objeto 'sistema' es el CORAZÓN del programa. 
-    // Se crea una sola vez para que todos los módulos compartan los mismos datos.
+    // Instancia única del sistema. Todos los módulos trabajarán sobre esta misma variable.
     SistemaLearningCenter sistema;
-
     int opcionModulo;
 
     do {
@@ -31,25 +30,27 @@ int main() {
         cout << "--------------------------------------------" << endl;
         cout << "Seleccione un modulo para ingresar: ";
         
+        // Validación para evitar que letras rompan el menú
         if (!(cin >> opcionModulo)) {
-            cout << "Entrada no valida. Intente de nuevo." << endl;
+            cout << "\n[!] Error: Ingrese un numero valido." << endl;
             cin.clear();
             cin.ignore(1000, '\n');
             continue;
         }
+        cin.ignore(); // Limpiar el buffer para los getlines siguientes
 
         switch (opcionModulo) {
             case 1:
-                menuModulo1(sistema); // Llamamos a tu parte
+                menuModulo1(sistema); 
                 break;
             case 2:
-                cout << "\n[!] Este modulo aun esta en desarrollo por tu compañero." << endl;
+                cout << "\n[!] Modulo en desarrollo por compañero A." << endl;
                 break;
             case 3:
-                cout << "\n[!] Este modulo aun esta en desarrollo por tu compañero." << endl;
+                cout << "\n[!] Modulo en desarrollo por compañero B." << endl;
                 break;
             case 0:
-                cout << "Cerrando sistema integral..." << endl;
+                cout << "Cerrando sistema... ¡Exitos en la Politecnica!" << endl;
                 break;
             default:
                 cout << "Opcion no valida." << endl;
@@ -60,7 +61,7 @@ int main() {
 }
 
 // ==========================================================
-//           IMPLEMENTACIÓN DEL MÓDULO 1 (TU PARTE)
+//           IMPLEMENTACIÓN DEL MÓDULO 1 (ESTUDIANTE)
 // ==========================================================
 void menuModulo1(SistemaLearningCenter& sistema) {
     int opcion;
@@ -78,48 +79,67 @@ void menuModulo1(SistemaLearningCenter& sistema) {
         cout << "7. Registrar Nueva Materia (Admin Temporal)" << endl;
         cout << "0. Volver al Menu Principal" << endl;
         cout << "Seleccione: ";
-        cin >> opcion;
+        
+        if (!(cin >> opcion)) {
+            cin.clear(); cin.ignore(1000, '\n'); continue;
+        }
         cin.ignore();
 
         switch (opcion) {
-            case 1:
+            case 1: // Registrarse
                 cout << "Nombre: "; getline(cin, nom);
                 cout << "ID Banner: "; getline(cin, id);
                 cout << "Correo: "; getline(cin, cor);
                 cout << "Carrera: "; getline(cin, carr);
-                cout << "Semestre: "; cin >> sem;
+                cout << "Semestre: "; 
+                while(!(cin >> sem)){ cin.clear(); cin.ignore(1000, '\n'); cout << "Dato invalido. Semestre: "; }
+                
                 sistema.getUsuarios().push_back(make_shared<Estudiante>(nom, id, cor, carr, sem));
-                cout << "[OK] Registrado exitosamente." << endl;
+                cout << "[OK] Estudiante registrado exitosamente." << endl;
                 break;
-            case 2:
-                cout << "\n--- CATALOGO ACTUAL ---" << endl;
+
+            case 2: // Catálogo
+                sistema.buscarMateriaPorId(""); // Esto es para refrescar si fuera necesario
+                cout << "\n--- CATALOGO ACTUAL DE MATERIAS ---" << endl;
                 for(auto& m : sistema.getMaterias()) m->mostrarDatos();
                 break;
-            case 3:
-                cout << "ID Estudiante: "; getline(cin, id);
+
+            case 3: // Create
+                cout << "Tu ID Estudiante: "; getline(cin, id);
                 cout << "ID Tutor (Prueba: T100): "; getline(cin, idTut);
-                cout << "ID Materia (Prueba: MAT101): "; getline(cin, idMat);
-                cout << "Fecha: "; getline(cin, fecha);
+                cout << "Codigo Materia (Prueba: MAT101): "; getline(cin, idMat);
+                cout << "Fecha y Hora: "; getline(cin, fecha);
                 sistema.agendarTutoria(id, idTut, idMat, fecha);
                 break;
-            case 4:
-                cout << "ID Estudiante: "; getline(cin, id);
+
+            case 4: // Read
+                cout << "Ingrese su ID para ver sus citas: "; getline(cin, id);
                 sistema.verMisTutorias(id);
                 break;
-            case 5:
-                cout << "Numero de sesion: "; cin >> idSesion; cin.ignore();
-                cout << "Nueva Fecha: "; getline(cin, fecha);
+
+            case 5: // Update
+                cout << "Numero de cita a modificar: "; cin >> idSesion; cin.ignore();
+                cout << "Nueva Fecha/Hora: "; getline(cin, fecha);
                 sistema.modificarFechaTutoria(idSesion, fecha);
                 break;
-            case 6:
-                cout << "Numero de sesion a cancelar: "; cin >> idSesion;
+
+            case 6: // Delete
+                cout << "Numero de cita a cancelar: "; cin >> idSesion;
                 sistema.cancelarTutoria(idSesion);
                 break;
-            case 7:
+
+            case 7: // Auxiliar para añadir materias rápido
                 cout << "Nombre Materia: "; getline(cin, nom);
-                cout << "Codigo: "; getline(cin, id);
+                cout << "Codigo (ID): "; getline(cin, id);
                 sistema.getMaterias().push_back(make_shared<Materia>(nom, id, 1.0));
+                cout << "[OK] Materia agregada." << endl;
                 break;
         }
+        
+        if(opcion != 0) {
+            cout << "\nPresione Enter para continuar...";
+            cin.ignore(); // Pausa estética
+        }
+
     } while (opcion != 0);
 }

@@ -3,8 +3,8 @@
 
 #include <string>
 #include <memory>
-#include "Tutor.h"      // Se creará después (ya creado)
-#include "Estudiante.h" // Se creará después
+#include "Tutor.h"      
+#include "Estudiante.h" 
 #include "Materia.h"
 
 class SesionTutoria {

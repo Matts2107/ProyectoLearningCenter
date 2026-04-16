@@ -22,7 +22,7 @@ public:
     SistemaLearningCenter();
 
     // --- MÉTODOS PARA PREPARAR DATOS (Necesarios para que el estudiante tenga qué elegir) ---
-    void inicializarDatosPrueba(); // Para crear tutores y materias manualmente
+    void inicializarDatosPrueba(); // Para crear tutores y materias manualmente temporalmente antes de implementar el csv, parte de marcelo
     
     // --- MÓDULO 1: GESTIÓN DE RESERVAS (ESTUDIANTE) ---
     

@@ -1,7 +1,7 @@
 #ifndef TUTOR_H
 #define TUTOR_H
 
-#include "Persona.h"
+#include "persona.h"
 #include "Empleado.h"
 #include "Materia.h"
 #include <vector>

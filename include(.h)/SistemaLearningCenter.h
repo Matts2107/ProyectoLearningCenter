@@ -34,6 +34,7 @@ public:
     void verMisTutorias(std::string idEstudiante);
     bool modificarFechaTutoria(int idSesion, std::string nuevaFechaHora);
     bool cancelarTutoria(int idSesion);
+    void mostrarCatalogoMaterias(); // <--- ASEGURATE DE QUE ESTE ESTA LINEA
 
     // --- MÉTODOS DE BÚSQUEDA ---
     std::shared_ptr<Persona> buscarUsuarioPorId(std::string id);

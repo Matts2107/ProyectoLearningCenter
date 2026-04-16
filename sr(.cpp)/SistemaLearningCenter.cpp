@@ -68,6 +68,20 @@ void SistemaLearningCenter::verMisTutorias(string idEstudiante) {
         cout << "No tienes tutorias agendadas actualmente." << endl;
     }
 }
+void SistemaLearningCenter::mostrarCatalogoMaterias() {
+    cout << "\n--- CATALOGO DE MATERIAS DISPONIBLES ---" << endl;
+    
+    // Verificamos si el vector de materias está vacío
+    if (materias.empty()) {
+        cout << "[!] No hay materias registradas en el sistema." << endl;
+    } else {
+        // Recorremos el vector de punteros compartidos
+        for (const auto& m : materias) {
+            m->mostrarDatos(); // Llama al método de la clase Materia
+            cout << "-----------------------" << endl;
+        }
+    }
+}
 
 // UPDATE: Cambiar fecha/hora
 bool SistemaLearningCenter::modificarFechaTutoria(int idSesion, string nuevaFechaHora) {

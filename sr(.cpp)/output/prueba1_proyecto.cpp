@@ -4,6 +4,39 @@
 #include <memory>
 
 // ==========================================
+// CLASE MATERIA 
+//===========================================
+
+class Materia {
+private:
+    std::string nombreM;
+    std::string codigoM; 
+    int multiplicador;   
+
+public:
+    // Constructor corregido
+    Materia(std::string n_, std::string cod_, int mult_) 
+        : nombreM(n_), codigoM(cod_), multiplicador(mult_) {}
+    
+    // Función sin override, ya que no hay herencia aquí
+    void mostrarMateria() const {
+        std::cout << "ID: " << codigoM 
+                  << " | Nombre: " << nombreM 
+                  << " | Multiplicador: " << multiplicador << "\n";
+    }
+    
+    // Getters
+    std::string getMateria() const { return nombreM; }
+    std::string getCodigo() const { return codigoM; }
+    int getMultiplicador() const { return multiplicador; } 
+
+    // --- SETTER AÑADIDO ---
+    void setMultiplicador(int nuevoMultiplicador) {
+        multiplicador = nuevoMultiplicador;
+    }
+}; 
+
+// ==========================================
 // CLASE ABSTRACTA BASE
 // ==========================================
 class Persona {

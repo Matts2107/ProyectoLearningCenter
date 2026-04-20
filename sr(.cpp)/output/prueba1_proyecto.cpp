@@ -2,9 +2,76 @@
 #include <string>
 #include <vector>
 #include <memory>
-#include "Materia.h"
-#include "Persona.h"
-#include "Tutor.h"
+
+
+class Materia {
+private:
+    std::string nombreM;
+    std::string codigoM; 
+    int multiplicador;   
+
+public:
+    Materia(std::string n_, std::string cod_, int mult_) 
+        : nombreM(n_), codigoM(cod_), multiplicador(mult_) {}
+    
+    void mostrarMateria() const {
+        std::cout << "ID: " << codigoM 
+                  << " | Nombre: " << nombreM 
+                  << " | Multiplicador: " << multiplicador << "\n";
+    }
+    
+    std::string getMateria() const { return nombreM; }
+    std::string getCodigo() const { return codigoM; }
+    int getMultiplicador() const { return multiplicador; } 
+
+    void setMultiplicador(int nuevoMultiplicador) {
+        multiplicador = nuevoMultiplicador;
+    }
+}; 
+// ==========================================
+// CLASE Persona (Abstracta)
+// ==========================================
+class Persona {
+protected:
+    std::string nombre;
+    std::string id_banner;
+    std::string correo;
+
+public:
+    Persona(std::string _nombre, std::string _id, std::string _correo) 
+        : nombre(_nombre), id_banner(_id), correo(_correo) {}
+
+    // Método virtual puro (hace que la clase sea abstracta)
+    virtual void mostrarPerfil() const = 0;
+
+    std::string getIdBanner() const { return id_banner; }
+    std::string getNombre() const { return nombre; }
+
+    virtual ~Persona() {} 
+};
+
+
+// ==========================================
+// CLASE TUTOR (Hereda Persona)
+// ==========================================
+
+class Tutor : public Persona {
+private:
+    double tarifa_hora;
+
+public:
+    Tutor(std::string _nom, std::string _id, std::string _cor, double _tarifa)
+        : Persona(_nom, _id, _cor), tarifa_hora(_tarifa) {}
+
+    // Polimorfismo: Implementamos el método abstracto
+    void mostrarPerfil() const override {
+        std::cout << "ID: " << id_banner 
+                  << " | Nombre: " << nombre 
+                  << " | Correo: " << correo 
+                  << " | Tarifa: $" << tarifa_hora << "/h\n";
+    }
+};
+
 
 // ==========================================
 // CLASE SISTEMA (Gestor Central)

@@ -224,6 +224,10 @@ public:
     
 };
 // ==========================================
+// DECLARACIÓN FUNCIÓN MENU ADMINISTRADOR
+// ==========================================
+void menuAdministrador(SistemaLearningCenter& sistema);
+// ==========================================
 // FUNCION PRINCIPAL
 // ==========================================
 int main() {
@@ -231,6 +235,45 @@ int main() {
     std::cout << "Iniciando Sistema Learning Center...\n";
     sistema.inicializarDatosPrueba();
     
+    int opcionPrincipal;
+    
+    // 2. Menú Principal
+    do {
+        std::cout << "\n============================================\n";
+        std::cout << "       SISTEMA INTEGRADO LEARNING CENTER      \n";
+        std::cout << "============================================\n";
+        std::cout << "1. Modulo de Estudiante\n";
+        std::cout << "2. Modulo de Tutor\n";
+        std::cout << "3. Modulo Administrador\n";
+        std::cout << "0. Salir del Sistema\n";
+        std::cout << "Seleccione una opcion: ";
+        std::cin >> opcionPrincipal;
+        
+        if (opcionPrincipal == 1) {
+            std::cout << "\n[Entrando al Modulo de Estudiante... (Proximamente)]\n";
+            // Cuando lo programes, llamarás a algo como: menuEstudiante(sistema);
+        } 
+        else if (opcionPrincipal == 2) {
+            std::cout << "\n[Entrando al Modulo de Tutor... (Proximamente)]\n";
+            // Cuando lo programes, llamarás a algo como: menuTutor(sistema);
+        } 
+        else if (opcionPrincipal == 3) {
+            
+            menuAdministrador(sistema); 
+        } 
+        else if (opcionPrincipal != 0) {
+            std::cout << "\nOpcion no valida. Intente nuevamente.\n";
+        }
+        
+    } while (opcionPrincipal != 0);
+    
+    std::cout << "\nSaliendo del sistema. ¡Hasta pronto!\n";
+    return 0;
+}
+
+
+
+void menuAdministrador(SistemaLearningCenter& sistema) {
     int opcion;
     do {
         std::cout << "\n=== PANEL DE ADMINISTRADOR ===\n";
@@ -240,10 +283,10 @@ int main() {
         std::cout << "4. Anadir nueva materia\n";
         std::cout << "5. Eliminar tutor\n";
         std::cout << "6. Eliminar materia\n";
-        std::cout << "7. Modificar tarifa de un Tutor\n";       // NUEVO
-        std::cout << "8. Modificar correo de un Usuario\n";     // NUEVO
-        std::cout << "9. Modificar multiplicador de Materia\n"; // NUEVO
-        std::cout << "10. Salir\n";
+        std::cout << "7. Modificar tarifa de un Tutor\n";       
+        std::cout << "8. Modificar correo de un Usuario\n";     
+        std::cout << "9. Modificar multiplicador de Materia\n"; 
+        std::cout << "10. Regresar al Menu Principal\n"; // Cambié el texto para que tenga sentido
         std::cout << "Seleccione una opcion: ";
         std::cin >> opcion;
         
@@ -306,7 +349,4 @@ int main() {
             std::cout << "\nOpcion no valida. Intente nuevamente.\n";
         }
     } while (opcion != 10);
-    
-    std::cout << "\nSaliendo del sistema. ¡Hasta pronto!\n";
-    return 0;
 }

@@ -29,7 +29,7 @@ public:
     void setMultiplicador(int nuevoMultiplicador) {
         multiplicador = nuevoMultiplicador;
     }
-}; 
+};
 // ==========================================
 // CLASE Persona (Abstracta)
 // ==========================================
@@ -83,6 +83,35 @@ public:
     }
 };
 // ==========================================
+// CLASE ESTUDIANTE (Hereda de Persona)
+// ==========================================
+class Estudiante : public Persona {
+private:
+    std::string carrera;
+    int semestre;
+
+public:
+    // Constructor: Pasa el nombre, ID y correo a la clase base Persona
+    Estudiante(std::string _nom, std::string _id, std::string _cor, std::string _car, int _sem)
+        : Persona(_nom, _id, _cor), carrera(_car), semestre(_sem) {}
+
+    // Implementación del Polimorfismo
+    void mostrarPerfil() const override {
+        std::cout << "\n--- PERFIL DEL ESTUDIANTE ---\n";
+        // 'nombre', 'id_banner' y 'correo' son protected en Persona, así que podemos usarlos aquí
+        std::cout << "Nombre:    " << nombre << std::endl; 
+        std::cout << "ID Banner: " << id_banner << std::endl;
+        std::cout << "Carrera:   " << carrera << std::endl;
+        std::cout << "Semestre:  " << semestre << "to" << std::endl;
+        std::cout << "Correo:    " << correo << std::endl;
+        std::cout << "-----------------------------" << std::endl;
+    }
+    
+    // Getters por si necesitas acceder a estos datos más adelante
+    std::string getCarrera() const { return carrera; }
+    int getSemestre() const { return semestre; }
+};
+// ==========================================
 // CLASE SISTEMA (Gestor Central)
 // ==========================================
 class SistemaLearningCenter {
@@ -97,6 +126,8 @@ public:
     void inicializarDatosPrueba() {
         usuarios.push_back(std::make_shared<Tutor>("Marcelo Diaz", "00123", "marcelo@u.edu", 15.0));
         usuarios.push_back(std::make_shared<Tutor>("Ana Lopez", "00124", "ana@u.edu", 18.5));
+        usuarios.push_back(std::make_shared<Estudiante>("Maria Lopez", "00334455", "maria@estudiante.edu", "Medicina", 5));
+		usuarios.push_back(std::make_shared<Estudiante>("Carlos Ruiz", "00998877", "carlos@estudiante.edu", "Arquitectura", 2));
         materias.push_back(std::make_shared<Materia>("Calculo Diferencial", "MATH101", 2));
         materias.push_back(std::make_shared<Materia>("Fisica", "PHYS101", 3));
         

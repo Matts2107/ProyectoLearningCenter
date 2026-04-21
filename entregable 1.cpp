@@ -21,7 +21,7 @@ public:
     
     void mostrarMateria() const {
         cout << "ID: " << codigoM << " | Nombre: " << nombreM 
-            << " | Multiplicador: " << multiplicador << "\n";
+             << " | Mult: " << multiplicador << endl;
     }
     
     string getMateria() const { return nombreM; }
@@ -50,7 +50,21 @@ public:
 };
 
 // ==========================================
-// CLASE ESTUDIANTE
+// CLASE Empleado (Base laboral)
+// ==========================================
+class Empleado {
+protected:
+    double tarifaBase;
+
+public:
+    Empleado(double _tarifa) : tarifaBase(_tarifa) {}
+    void setTarifa(double t) { tarifaBase = t; }
+    double getTarifa() const { return tarifaBase; }
+    virtual ~Empleado() {}
+};
+
+// ==========================================
+// CLASE Estudiante
 // ==========================================
 class Estudiante : public Persona {
 private:
@@ -62,33 +76,27 @@ public:
         : Persona(_nom, _id, _cor), carrera(_carr), semestre(_sem) {}
 
     void mostrarPerfil() const override {
-        cout << "[Estudiante] ID: " << id_banner 
-             << " | Nombre: " << nombre 
+        cout << "[Estudiante] ID: " << id_banner << " | Nombre: " << nombre 
              << " | Carrera: " << carrera << " (" << semestre << "mo)\n";
     }
 };
 
 // ==========================================
-// CLASE TUTOR
+// CLASE Tutor (Hereda de Persona y Empleado)
 // ==========================================
-class Tutor : public Persona {
-private:
-    double tarifa_hora;
-
+class Tutor : public Persona, public Empleado {
 public:
     Tutor(string _nom, string _id, string _cor, double _tarifa)
-        : Persona(_nom, _id, _cor), tarifa_hora(_tarifa) {}
+        : Persona(_nom, _id, _cor), Empleado(_tarifa) {}
 
     void mostrarPerfil() const override {
-        cout << "[Tutor]      ID: " << id_banner 
-             << " | Nombre: " << nombre 
-             << " | Tarifa: $" << tarifa_hora << "/h\n";
+        cout << "[Tutor]      ID: " << id_banner << " | Nombre: " << nombre 
+             << " | Tarifa: $" << tarifaBase << "/h\n";
     }
-    void setTarifa(double t) { tarifa_hora = t; }
 };
 
 // ==========================================
-// CLASE SESIÓN TUTORÍA
+// CLASE Sesión Tutoría
 // ==========================================
 class SesionTutoria {
 private:
@@ -106,9 +114,8 @@ public:
     shared_ptr<Materia> getMateria() const { return materia; }
 
     void imprimirDetalles() const {
-        cout << " >> [" << fechaHora << "] MATERIA: " << materia->getMateria() 
-             << " | TUTOR: " << tutor->getNombre() 
-             << " | ALUMNO: " << estudiante->getNombre() << endl;
+        cout << " >> [" << fechaHora << "] " << materia->getMateria() 
+             << " | Tutor: " << tutor->getNombre() << " | Alumno: " << estudiante->getNombre() << endl;
     }
 };
 
@@ -122,6 +129,7 @@ private:
     vector<shared_ptr<SesionTutoria>> sesiones;
 
 public:
+    // BUSCADORES
     shared_ptr<Persona> buscarUsuarioPorId(string id) {
         for (auto& u : usuarios) if (u->getIdBanner() == id) return u;
         return nullptr;
@@ -136,11 +144,10 @@ public:
         usuarios.push_back(make_shared<Tutor>("Marcelo Diaz", "T001", "marcelo@u.edu", 15.0));
         usuarios.push_back(make_shared<Estudiante>("Mattias", "E001", "matt@u.edu", "Computacion", 4));
         materias.push_back(make_shared<Materia>("Calculo Diferencial", "MATH101", 2));
-        materias.push_back(make_shared<Materia>("Fisica", "PHYS101", 3));
-        cout << "-> Datos de prueba cargados con exito.\n";
+        cout << "-> Datos de prueba cargados.\n";
     }
 
-    // --- OPERACIONES DE AGENDAMIENTO ---
+    // OPERACIONES DE SESIONES
     void agendarTutoria(string idEst, string idTut, string idMat, string fecha) {
         auto pEst = buscarUsuarioPorId(idEst);
         auto pTut = buscarUsuarioPorId(idTut);
@@ -151,79 +158,73 @@ public:
 
         if (est && tut && mat) {
             sesiones.push_back(make_shared<SesionTutoria>(est, tut, mat, fecha));
-            cout << "\n[EXITO] Tutoria agendada correctamente.\n";
-        } else {
-            cout << "\n[ERROR] Verifique que los IDs existan y los roles sean correctos.\n";
-        }
-    }
-
-    void modificarFechaTutoria(string idEst, string codMat, string nuevaFecha) {
-        for (auto& s : sesiones) {
-            if (s->getEstudiante()->getIdBanner() == idEst && s->getMateria()->getCodigo() == codMat) {
-                s->setFecha(nuevaFecha);
-                cout << "\n[EXITO] Fecha actualizada a: " << nuevaFecha << endl;
-                return;
-            }
-        }
-        cout << "\n[ERROR] No se encontro ninguna tutoria activa con esos datos.\n";
-    }
-
-    void cancelarTutoria(string idEst, string codMat) {
-        auto it = remove_if(sesiones.begin(), sesiones.end(), [&](shared_ptr<SesionTutoria> s){
-            return s->getEstudiante()->getIdBanner() == idEst && s->getMateria()->getCodigo() == codMat;
-        });
-
-        if (it != sesiones.end()) {
-            sesiones.erase(it, sesiones.end());
-            cout << "\n[EXITO] Tutoria cancelada y eliminada del sistema.\n";
-        } else {
-            cout << "\n[ERROR] No se encontro la tutoria para cancelar.\n";
-        }
-    }
-
-    // --- LISTADOS ---
-    void listarTutores() const {
-        cout << "\n--- TUTORES REGISTRADOS ---\n";
-        for (const auto& u : usuarios) {
-            if (dynamic_pointer_cast<Tutor>(u)) u->mostrarPerfil();
-        }
-    }
-
-    void listarMaterias() const {
-        cout << "\n--- MATERIAS DISPONIBLES ---\n";
-        for (const auto& m : materias) m->mostrarMateria();
+            cout << "\n[OK] Tutoria agendada exitosamente.\n";
+        } else cout << "\n[ERROR] Verifique los IDs y tipos de usuario.\n";
     }
 
     void listarHistorial() const {
-        cout << "\n--- CRONOGRAMA DE TUTORIAS ---\n";
-        if (sesiones.empty()) cout << "No hay sesiones registradas.\n";
+        cout << "\n--- HISTORIAL DE SESIONES ---\n";
+        if (sesiones.empty()) cout << "No hay tutorias agendadas.\n";
         for (const auto& s : sesiones) s->imprimirDetalles();
     }
 
-    // --- ADMIN CRUD ---
+    // MÉTODOS DEL ADMINISTRADOR (Imagen)
+    void listarTutores() const {
+        cout << "\n--- TUTORES REGISTRADOS ---\n";
+        for (const auto& u : usuarios) if (dynamic_pointer_cast<Tutor>(u)) u->mostrarPerfil();
+    }
+
     void registrarTutor(string n, string id, string c, double t) {
         usuarios.push_back(make_shared<Tutor>(n, id, c, t));
-        cout << "\nTutor registrado.\n";
+        cout << "\n[EXITO] Tutor registrado.\n";
+    }
+
+    void listarMaterias() const {
+        cout << "\n--- MATERIAS REGISTRADAS ---\n";
+        for (const auto& m : materias) m->mostrarMateria();
     }
 
     void registrarMateria(string n, string cod, int m) {
         materias.push_back(make_shared<Materia>(n, cod, m));
-        cout << "\nMateria registrada.\n";
+        cout << "\n[EXITO] Materia registrada.\n";
     }
 
-    void eliminarUsuario(string id) {
+    void eliminarTutor(string id) {
         auto it = remove_if(usuarios.begin(), usuarios.end(), [&](shared_ptr<Persona> u){
-            return u->getIdBanner() == id;
+            return u->getIdBanner() == id && dynamic_pointer_cast<Tutor>(u);
         });
-        if (it != usuarios.end()) {
-            usuarios.erase(it, usuarios.end());
-            cout << "\n[EXITO] Usuario eliminado.\n";
-        } else cout << "\n[ERROR] ID no encontrado.\n";
+        if (it != usuarios.end()) { usuarios.erase(it, usuarios.end()); cout << "\n[EXITO] Tutor eliminado.\n"; }
+        else cout << "\n[ERROR] No se encontro un tutor con ese ID.\n";
+    }
+
+    void eliminarMateria(string cod) {
+        auto it = remove_if(materias.begin(), materias.end(), [&](shared_ptr<Materia> m){ return m->getCodigo() == cod; });
+        if (it != materias.end()) { materias.erase(it, materias.end()); cout << "\n[EXITO] Materia eliminada.\n"; }
+        else cout << "\n[ERROR] Codigo no encontrado.\n";
+    }
+
+    void modificarTarifa(string id, double t) {
+        auto u = buscarUsuarioPorId(id);
+        auto tut = dynamic_pointer_cast<Tutor>(u);
+        if (tut) { tut->setTarifa(t); cout << "\n[EXITO] Tarifa actualizada.\n"; }
+        else cout << "\n[ERROR] ID no corresponde a un tutor.\n";
+    }
+
+    void modificarCorreo(string id, string c) {
+        auto u = buscarUsuarioPorId(id);
+        if (u) { u->cambiarCorreo(c); cout << "\n[EXITO] Correo actualizado.\n"; }
+        else cout << "\n[ERROR] Usuario no encontrado.\n";
+    }
+
+    void modificarMultiplicador(string cod, int m) {
+        auto mat = buscarMateriaPorId(cod);
+        if (mat) { mat->setMultiplicador(m); cout << "\n[EXITO] Multiplicador actualizado.\n"; }
+        else cout << "\n[ERROR] Materia no encontrada.\n";
     }
 };
 
 // ==========================================
-// FUNCIONES DE MENÚ
+// MENÚS Y MAIN
 // ==========================================
 void menuAdministrador(SistemaLearningCenter& sistema);
 void menuEstudiante(SistemaLearningCenter& sistema);
@@ -231,83 +232,64 @@ void menuEstudiante(SistemaLearningCenter& sistema);
 int main() {
     SistemaLearningCenter sistema;
     sistema.inicializarDatosPrueba();
-    
     int opcionPrincipal;
+
     do {
-        cout << "\n============================================\n";
-        cout << "       SISTEMA INTEGRADO LEARNING CENTER      \n";
-        cout << "============================================\n";
+        cout << "\n=== SISTEMA INTEGRADO LEARNING CENTER ===\n";
         cout << "1. Modulo de Estudiante\n2. Modulo Administrador\n0. Salir\nOpcion: ";
         cin >> opcionPrincipal;
-        
         if (opcionPrincipal == 1) menuEstudiante(sistema);
         else if (opcionPrincipal == 2) menuAdministrador(sistema);
-        
     } while (opcionPrincipal != 0);
-    
+
     return 0;
-}
-
-void menuEstudiante(SistemaLearningCenter& sistema) {
-    int opcion;
-    do {
-        cout << "\n--- MODULO ESTUDIANTE ---\n";
-        cout << "1. Ver Materias\n2. Agendar Tutoria\n3. Modificar Fecha de Tutoria\n4. Cancelar Tutoria\n5. Ver mis Sesiones\n6. Regresar\nOpcion: ";
-        cin >> opcion;
-
-        if (opcion == 1) sistema.listarMaterias();
-        else if (opcion == 2) {
-            string e, t, m, f;
-            cout << "Tu ID Estudiante: "; cin >> e;
-            cout << "ID del Tutor: "; cin >> t;
-            cout << "Codigo Materia: "; cin >> m;
-            cout << "Fecha (ej: 25/04-10am): "; cin >> f;
-            sistema.agendarTutoria(e, t, m, f);
-        }
-        else if (opcion == 3) {
-            string e, m, f;
-            cout << "Tu ID Estudiante: "; cin >> e;
-            cout << "Codigo Materia de la tutoria: "; cin >> m;
-            cout << "Nueva Fecha/Hora: "; cin >> f;
-            sistema.modificarFechaTutoria(e, m, f);
-        }
-        else if (opcion == 4) {
-            string e, m;
-            cout << "Tu ID Estudiante: "; cin >> e;
-            cout << "Codigo Materia a cancelar: "; cin >> m;
-            sistema.cancelarTutoria(e, m);
-        }
-        else if (opcion == 5) sistema.listarHistorial();
-
-    } while (opcion != 6);
 }
 
 void menuAdministrador(SistemaLearningCenter& sistema) {
     int opcion;
     do {
-        cout << "\n--- PANEL ADMINISTRADOR ---\n";
-        cout << "1. Listar Tutores\n2. Registrar Nuevo Tutor\n3. Registrar Materia\n4. Eliminar Usuario\n5. Regresar\nOpcion: ";
+        cout << "\n=== PANEL DE ADMINISTRADOR ===\n";
+        cout << "1. Ver tutores registrados\n2. Anadir nuevo tutor\n3. Ver materias registradas\n";
+        cout << "4. Anadir nueva materia\n5. Eliminar tutor\n6. Eliminar materia\n";
+        cout << "7. Modificar tarifa de un Tutor\n8. Modificar correo de un Usuario\n";
+        cout << "9. Modificar multiplicador de Materia\n10. Regresar al Menu Principal\n";
+        cout << "Seleccione una opcion: ";
         cin >> opcion;
 
         if (opcion == 1) sistema.listarTutores();
         else if (opcion == 2) {
             string n, id, c; double t;
-            cout << "Nombre: "; cin.ignore(); getline(cin, n);
-            cout << "ID: "; cin >> id;
-            cout << "Correo: "; cin >> c;
-            cout << "Tarifa: "; cin >> t;
+            cout << "ID: "; cin >> id; cin.ignore(); cout << "Nombre: "; getline(cin, n);
+            cout << "Correo: "; cin >> c; cout << "Tarifa: "; cin >> t;
             sistema.registrarTutor(n, id, c, t);
         }
-        else if (opcion == 3) {
+        else if (opcion == 3) sistema.listarMaterias();
+        else if (opcion == 4) {
             string n, cod; int m;
-            cout << "Nombre Materia: "; cin.ignore(); getline(cin, n);
-            cout << "Codigo: "; cin >> cod;
+            cout << "Codigo: "; cin >> cod; cin.ignore(); cout << "Nombre: "; getline(cin, n);
             cout << "Multiplicador: "; cin >> m;
             sistema.registrarMateria(n, cod, m);
         }
-        else if (opcion == 4) {
-            string id; cout << "ID a borrar: "; cin >> id;
-            sistema.eliminarUsuario(id);
+        else if (opcion == 5) { string id; cout << "ID a eliminar: "; cin >> id; sistema.eliminarTutor(id); }
+        else if (opcion == 6) { string cod; cout << "Codigo a eliminar: "; cin >> cod; sistema.eliminarMateria(cod); }
+        else if (opcion == 7) { string id; double t; cout << "ID Tutor: "; cin >> id; cout << "Nueva Tarifa: "; cin >> t; sistema.modificarTarifa(id, t); }
+        else if (opcion == 8) { string id, c; cout << "ID Usuario: "; cin >> id; cout << "Nuevo Correo: "; cin >> c; sistema.modificarCorreo(id, c); }
+        else if (opcion == 9) { string cod; int m; cout << "Cod Materia: "; cin >> cod; cout << "Nuevo Multiplicador: "; cin >> m; sistema.modificarMultiplicador(cod, m); }
+
+    } while (opcion != 10);
+}
+
+void menuEstudiante(SistemaLearningCenter& sistema) {
+    int opt;
+    do {
+        cout << "\n[MODULO ESTUDIANTE]\n1. Agendar Tutoria\n2. Ver Historial\n3. Regresar\nOpcion: ";
+        cin >> opt;
+        if (opt == 1) {
+            string e, t, m, f;
+            cout << "ID Estudiante: "; cin >> e; cout << "ID Tutor: "; cin >> t;
+            cout << "Cod Materia: "; cin >> m; cout << "Fecha: "; cin >> f;
+            sistema.agendarTutoria(e, t, m, f);
         }
-    } while (opcion != 5);
+        else if (opt == 2) sistema.listarHistorial();
+    } while (opt != 3);
 }

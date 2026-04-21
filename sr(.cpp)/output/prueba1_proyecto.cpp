@@ -18,8 +18,8 @@ public:
     
     void mostrarMateria() const {
         std::cout << "ID: " << codigoM 
-                  << " | Nombre: " << nombreM 
-                  << " | Multiplicador: " << multiplicador << "\n";
+                << " | Nombre: " << nombreM 
+                << " | Multiplicador: " << multiplicador << "\n";
     }
     
     std::string getMateria() const { return nombreM; }
@@ -70,9 +70,9 @@ public:
     // Polimorfismo: Implementamos el método abstracto
     void mostrarPerfil() const override {
         std::cout << "ID: " << id_banner 
-                  << " | Nombre: " << nombre 
-                  << " | Correo: " << correo 
-                  << " | Tarifa: $" << tarifa_hora << "/h\n";
+                << " | Nombre: " << nombre 
+                << " | Correo: " << correo 
+                << " | Tarifa: $" << tarifa_hora << "/h\n";
     }
     double getTarifa() const { 
         return tarifa_hora; 
@@ -99,7 +99,7 @@ public:
         usuarios.push_back(std::make_shared<Tutor>("Ana Lopez", "00124", "ana@u.edu", 18.5));
         materias.push_back(std::make_shared<Materia>("Calculo Diferencial", "MATH101", 2));
         materias.push_back(std::make_shared<Materia>("Fisica", "PHYS101", 3));
-        std::cout << "-> Datos de prueba cargados exitosamente.\n";
+        std::cout << "-> Datos de prueba cargados  exitosamente.\n";
     }
 
     // Método para el Administrador (Create Tutor)
@@ -214,7 +214,7 @@ public:
             if (m->getCodigo() == codigoBuscar) {
                 m->setMultiplicador(nuevoMultiplicador);
                 std::cout << "\n[EXITO] El multiplicador de la materia " << m->getMateria() 
-                          << " se actualizo a " << nuevoMultiplicador << ".\n";
+                        << " se actualizo a " << nuevoMultiplicador << ".\n";
                 return;
             }
         }

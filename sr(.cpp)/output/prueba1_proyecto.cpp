@@ -223,10 +223,13 @@ public:
     
     
 };
+
 // ==========================================
 // DECLARACIÓN FUNCIÓN MENU ADMINISTRADOR
 // ==========================================
+
 void menuAdministrador(SistemaLearningCenter& sistema);
+void menuEstudiante(SistemaLearningCenter& sistema);
 // ==========================================
 // FUNCION PRINCIPAL
 // ==========================================
@@ -251,14 +254,15 @@ int main() {
         
         if (opcionPrincipal == 1) {
             std::cout << "\n[Entrando al Modulo de Estudiante... (Proximamente)]\n";
-            // Cuando lo programes, llamarás a algo como: menuEstudiante(sistema);
+            
+            menuEstudiante(sistema);
         } 
         else if (opcionPrincipal == 2) {
             std::cout << "\n[Entrando al Modulo de Tutor... (Proximamente)]\n";
             // Cuando lo programes, llamarás a algo como: menuTutor(sistema);
         } 
         else if (opcionPrincipal == 3) {
-            
+        	
             menuAdministrador(sistema); 
         } 
         else if (opcionPrincipal != 0) {
@@ -349,4 +353,110 @@ void menuAdministrador(SistemaLearningCenter& sistema) {
             std::cout << "\nOpcion no valida. Intente nuevamente.\n";
         }
     } while (opcion != 10);
+}
+
+
+void menuEstudiante(SistemaLearningCenter& sistema) {
+    int opcion;
+    std::string nom, id, cor, carr, idTut, idMat, fecha;
+    int sem, idSesion;
+
+    do {
+        std::cout << "\n--- BIENVENIDO AL MODULO DE RESERVAS ---" << std::endl;
+        std::cout << "1. Registrarse como Estudiante" << std::endl;
+        std::cout << "2. Ver Catalogo de Materias" << std::endl;
+        std::cout << "3. Agendar Tutoria (Create)" << std::endl;
+        std::cout << "4. Ver Mis Tutorias (Read)" << std::endl;
+        std::cout << "5. Modificar Fecha/Hora (Update)" << std::endl;
+        std::cout << "6. Cancelar Tutoria (Delete)" << std::endl;
+        std::cout << "7. Registrar Nueva Materia (Admin Temporal)" << std::endl;
+        std::cout << "0. Volver al Menu Principal" << std::endl;
+        std::cout << "Seleccione: ";
+        
+        if (!(std::cin >> opcion)) {
+            std::cin.clear(); std::cin.ignore(1000, '\n'); continue;
+        }
+        std::cin.ignore();
+
+        switch (opcion) {
+            case 1: // Registrarse
+                std::cout << "Nombre: "; std::getline(std::cin, nom);
+                std::cout << "ID Banner: "; std::getline(std::cin, id);
+                std::cout << "Correo: "; std::getline(std::cin, cor);
+                std::cout << "Carrera: "; std::getline(std::cin, carr);
+                std::cout << "Semestre: "; 
+                while(!(std::cin >> sem)){ std::cin.clear(); std::cin.ignore(1000, '\n'); std::cout << "Dato invalido. Semestre: "; }
+                
+                // --- MÉTODOS COMENTADOS HASTA QUE LOS IMPLEMENTES ---
+                // sistema.getUsuarios().push_back(std::make_shared<Estudiante>(nom, id, cor, carr, sem));
+                
+                std::cout << "[OK] (SIMULADO) Estudiante registrado exitosamente." << std::endl;
+                break;
+
+            case 2: // Catálogo
+                // --- MÉTODOS COMENTADOS HASTA QUE LOS IMPLEMENTES ---
+                // sistema.buscarMateriaPorId(""); // Esto es para refrescar si fuera necesario
+                std::cout << "\n--- CATALOGO ACTUAL DE MATERIAS ---" << std::endl;
+                // for(auto& m : sistema.getMaterias()) m->mostrarDatos();
+                
+                std::cout << "(Mostrando catalogo simulado...)" << std::endl;
+                break;
+
+            case 3: // Create
+                std::cout << "Tu ID Estudiante: "; std::getline(std::cin, id);
+                std::cout << "ID Tutor (Prueba: T100): "; std::getline(std::cin, idTut);
+                std::cout << "Codigo Materia (Prueba: MAT101): "; std::getline(std::cin, idMat);
+                std::cout << "Fecha y Hora: "; std::getline(std::cin, fecha);
+                
+                // --- MÉTODOS COMENTADOS HASTA QUE LOS IMPLEMENTES ---
+                // sistema.agendarTutoria(id, idTut, idMat, fecha);
+                
+                std::cout << "[OK] (SIMULADO) Tutoria agendada exitosamente." << std::endl;
+                break;
+
+            case 4: // Read
+                std::cout << "Ingrese su ID para ver sus citas: "; std::getline(std::cin, id);
+                
+                // --- MÉTODOS COMENTADOS HASTA QUE LOS IMPLEMENTES ---
+                // sistema.verMisTutorias(id);
+                
+                std::cout << "(Mostrando tutorias simuladas...)" << std::endl;
+                break;
+
+            case 5: // Update
+                std::cout << "Numero de cita a modificar: "; std::cin >> idSesion; std::cin.ignore();
+                std::cout << "Nueva Fecha/Hora: "; std::getline(std::cin, fecha);
+                
+                // --- MÉTODOS COMENTADOS HASTA QUE LOS IMPLEMENTES ---
+                // sistema.modificarFechaTutoria(idSesion, fecha);
+                
+                std::cout << "[OK] (SIMULADO) Fecha de la tutoria actualizada." << std::endl;
+                break;
+
+            case 6: // Delete
+                std::cout << "Numero de cita a cancelar: "; std::cin >> idSesion;
+                
+                // --- MÉTODOS COMENTADOS HASTA QUE LOS IMPLEMENTES ---
+                // sistema.cancelarTutoria(idSesion);
+                
+                std::cout << "[OK] (SIMULADO) Tutoria cancelada." << std::endl;
+                break;
+
+            case 7: // Auxiliar para añadir materias rápido
+                std::cout << "Nombre Materia: "; std::getline(std::cin, nom);
+                std::cout << "Codigo (ID): "; std::getline(std::cin, id);
+                
+                // --- MÉTODOS COMENTADOS HASTA QUE LOS IMPLEMENTES ---
+                // sistema.getMaterias().push_back(std::make_shared<Materia>(nom, id, 1.0));
+                
+                std::cout << "[OK] (SIMULADO) Materia agregada al catalogo." << std::endl;
+                break;
+        }
+        
+        if(opcion != 0) {
+            std::cout << "\nPresione Enter para continuar...";
+            std::cin.ignore(); // Pausa estética de ENTER
+        }
+
+    } while (opcion != 0);
 }

@@ -81,19 +81,6 @@ public:
     }
 };
 
-// ==========================================
-// CLASE Tutor (Herencia Múltiple)
-// ==========================================
-class Tutor : public Persona, public Empleado {
-public:
-    Tutor(string _nom, string _id, string _cor, double _tarifa)
-        : Persona(_nom, _id, _cor), Empleado(_tarifa) {}
-
-    void mostrarPerfil() const override {
-        cout << "[Tutor]      ID: " << id_banner << " | Nombre: " << nombre 
-             << " | Tarifa: $" << tarifaBase << "/h\n";
-    }
-};
 
 // ==========================================
 // CLASE Sesión Tutoría

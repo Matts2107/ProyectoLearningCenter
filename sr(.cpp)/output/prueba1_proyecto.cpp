@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <algorithm>
 
 // ==========================================
 // CLASE Materia
@@ -30,6 +31,7 @@ public:
         multiplicador = nuevoMultiplicador;
     }
 };
+
 // ==========================================
 // CLASE Persona (Abstracta)
 // ==========================================
@@ -47,8 +49,8 @@ public:
     virtual void mostrarPerfil() const = 0;
     
     void cambiarCorreo(std::string nuevoCorreo) {
-    	correo = nuevoCorreo;
-	}
+        correo = nuevoCorreo;
+    }
 
     std::string getIdBanner() const { return id_banner; }
     std::string getNombre() const { return nombre; }
@@ -56,32 +58,38 @@ public:
 
     virtual ~Persona() {} 
 };
+
 // ==========================================
-// CLASE TUTOR (Hereda Persona)
+// CLASE Empleado (Base laboral para Tutor) - NUEVA
 // ==========================================
-class Tutor : public Persona {
-private:
-    double tarifa_hora;
+class Empleado {
+protected:
+    double tarifaBase;
 
 public:
+    Empleado(double _tarifa) : tarifaBase(_tarifa) {}
+    void setTarifa(double t) { tarifaBase = t; }
+    double getTarifa() const { return tarifaBase; }
+    virtual ~Empleado() {}
+};
+
+// ==========================================
+// CLASE TUTOR (Herencia Múltiple: Persona + Empleado)
+// ==========================================
+class Tutor : public Persona, public Empleado {
+public:
     Tutor(std::string _nom, std::string _id, std::string _cor, double _tarifa)
-        : Persona(_nom, _id, _cor), tarifa_hora(_tarifa) {}
+        : Persona(_nom, _id, _cor), Empleado(_tarifa) {}
 
     // Polimorfismo: Implementamos el método abstracto
     void mostrarPerfil() const override {
         std::cout << "ID: " << id_banner 
                   << " | Nombre: " << nombre 
                   << " | Correo: " << correo 
-                  << " | Tarifa: $" << tarifa_hora << "/h\n";
-    }
-    double getTarifa() const { 
-        return tarifa_hora; 
-    }
-    
-    void setTarifa(double nuevaTarifa) { 
-        tarifa_hora = nuevaTarifa; 
+                  << " | Tarifa: $" << tarifaBase << "/h\n";
     }
 };
+
 // ==========================================
 // CLASE ESTUDIANTE (Hereda de Persona)
 // ==========================================
@@ -98,7 +106,6 @@ public:
     // Implementación del Polimorfismo
     void mostrarPerfil() const override {
         std::cout << "\n--- PERFIL DEL ESTUDIANTE ---\n";
-        // 'nombre', 'id_banner' y 'correo' son protected en Persona, así que podemos usarlos aquí
         std::cout << "Nombre:    " << nombre << std::endl; 
         std::cout << "ID Banner: " << id_banner << std::endl;
         std::cout << "Carrera:   " << carrera << std::endl;
@@ -111,6 +118,31 @@ public:
     std::string getCarrera() const { return carrera; }
     int getSemestre() const { return semestre; }
 };
+
+// ==========================================
+// CLASE Sesión Tutoría - NUEVA
+// ==========================================
+class SesionTutoria {
+private:
+    std::shared_ptr<Estudiante> estudiante;
+    std::shared_ptr<Tutor> tutor;
+    std::shared_ptr<Materia> materia;
+    std::string fechaHora;
+
+public:
+    SesionTutoria(std::shared_ptr<Estudiante> e, std::shared_ptr<Tutor> t, std::shared_ptr<Materia> m, std::string fecha)
+        : estudiante(e), tutor(t), materia(m), fechaHora(fecha) {}
+
+    void setFecha(std::string nuevaFecha) { fechaHora = nuevaFecha; }
+    std::shared_ptr<Estudiante> getEstudiante() const { return estudiante; }
+    std::shared_ptr<Materia> getMateria() const { return materia; }
+
+    void imprimirDetalles() const {
+        std::cout << " >> [" << fechaHora << "] " << materia->getMateria() 
+                  << " | Tutor: " << tutor->getNombre() << " | Alumno: " << estudiante->getNombre() << std::endl;
+    }
+};
+
 // ==========================================
 // CLASE SISTEMA (Gestor Central)
 // ==========================================
@@ -119,16 +151,29 @@ private:
     // Almacenamiento polimórfico de usuarios
     std::vector<std::shared_ptr<Persona>> usuarios;
     std::vector<std::shared_ptr<Materia>> materias;
+    std::vector<std::shared_ptr<SesionTutoria>> sesiones; // NUEVO
+
 public:
     SistemaLearningCenter() {}
+
+    // Métodos auxiliares de búsqueda - NUEVOS
+    std::shared_ptr<Persona> buscarUsuarioPorId(std::string id) {
+        for (auto& u : usuarios) if (u->getIdBanner() == id) return u;
+        return nullptr;
+    }
+
+    std::shared_ptr<Materia> buscarMateriaPorId(std::string id) {
+        for (auto& m : materias) if (m->getCodigo() == id) return m;
+        return nullptr;
+    }
 
     // Carga inicial de tutores como pediste
     void inicializarDatosPrueba() {
         usuarios.push_back(std::make_shared<Tutor>("Marcelo Diaz", "00123", "marcelo@u.edu", 15.0));
         usuarios.push_back(std::make_shared<Tutor>("Ana Lopez", "00124", "ana@u.edu", 18.5));
-        usuarios.push_back(std::make_shared<Estudiante>("Maria Lopez", "00334455", "maria@estudiante.edu", "Medicina", 5));
-		usuarios.push_back(std::make_shared<Estudiante>("Carlos Ruiz", "00998877", "carlos@estudiante.edu", "Arquitectura", 2));
-        materias.push_back(std::make_shared<Materia>("Calculo Diferencial", "MATH101", 2));
+        usuarios.push_back(std::make_shared<Estudiante>("Maria Lopez", "00332572", "maria@estudiante.edu", "Medicina", 5));
+        usuarios.push_back(std::make_shared<Estudiante>("Carlos Ruiz", "00998877", "carlos@estudiante.edu", "Arquitectura", 2));
+        materias.push_back(std::make_shared<Materia>("Calculo Diferencial", "MATH", 2));
         materias.push_back(std::make_shared<Materia>("Fisica", "PHYS101", 3));
         
         std::cout << "-> Datos de prueba cargados exitosamente.\n";
@@ -162,41 +207,45 @@ public:
     // Método para el Administrador (Read Tutores)
     void listarTutores() const {
         std::cout << "\n--- LISTA DE TUTORES REGISTRADOS ---\n";
-        if (usuarios.empty()) {
-            std::cout << "No hay tutores en el sistema.\n";
-            return;
-        }
+        
+        bool hayTutores = false; // Bandera para saber si encontramos al menos uno
+        
         for (const auto& u : usuarios) {
-            u->mostrarPerfil(); // Llamada polimórfica
+            // Intentamos convertir (castear) la Persona a un Tutor
+            auto tutorPtr = std::dynamic_pointer_cast<Tutor>(u);
+            
+            // Si el resultado NO es nullptr, significa que sí era un Tutor
+            if (tutorPtr != nullptr) {
+                tutorPtr->mostrarPerfil(); 
+                hayTutores = true;
+            }
+        }
+
+        if (!hayTutores) {
+            std::cout << "No hay tutores registrados en el sistema.\n";
         }
         std::cout << "------------------------------------\n";
     }
 
     // ========================================================
-    // NUEVOS MÉTODOS DELETE (Eliminación)
+    // MÉTODOS DELETE (Eliminación)
     // ========================================================
 
     void eliminarTutor(std::string idBorrar) {
-        // Recorremos el vector "usuarios"
         for (auto it = usuarios.begin(); it != usuarios.end(); ) {
-            
             if ((*it)->getIdBanner() == idBorrar) {
-                // Al usar erase, C++ y shared_ptr liberan la memoria automáticamente
                 it = usuarios.erase(it);
                 std::cout << "\n[EXITO] El usuario con ID " << idBorrar << " ha sido eliminado.\n";
-                return; // Salimos de la función al encontrarlo
+                return;
             } else {
-                ++it; // Avanzamos al siguiente elemento
+                ++it;
             }
         }
-        // Si el bucle termina y no retornó, no existía ese ID
         std::cout << "\n[ERROR] No se encontro ningun usuario con el ID " << idBorrar << ".\n";
     }
 
     void eliminarMateria(std::string codigoBorrar) {
-        // Recorremos el vector "materias"
         for (auto it = materias.begin(); it != materias.end(); ) {
-            
             if ((*it)->getCodigo() == codigoBorrar) {
                 it = materias.erase(it);
                 std::cout << "\n[EXITO] La materia con codigo " << codigoBorrar << " ha sido eliminada.\n";
@@ -207,16 +256,15 @@ public:
         }
         std::cout << "\n[ERROR] No se encontro ninguna materia con el codigo " << codigoBorrar << ".\n";
     }
+
     // ========================================================
-    // NUEVOS MÉTODOS UPDATE (Modificación con y sin casteo)
+    // MÉTODOS UPDATE (Modificación con y sin casteo)
     // ========================================================
 
     void modificarTarifaTutor(std::string idBuscar, double nuevaTarifa) {
         for (auto& usuario : usuarios) {
             if (usuario->getIdBanner() == idBuscar) {
-                // AQUÍ USAMOS EL CASTEO INTELIGENTE
                 auto tutorPtr = std::dynamic_pointer_cast<Tutor>(usuario);
-                
                 if (tutorPtr != nullptr) {
                     tutorPtr->setTarifa(nuevaTarifa);
                     std::cout << "\n[EXITO] Tarifa actualizada a $" << nuevaTarifa << " por hora.\n";
@@ -232,7 +280,6 @@ public:
     void modificarCorreoUsuario(std::string idBuscar, std::string nuevoCorreo) {
         for (auto& usuario : usuarios) {
             if (usuario->getIdBanner() == idBuscar) {
-                // No necesita casteo, el método cambiarCorreo está en la clase base (Persona)
                 usuario->cambiarCorreo(nuevoCorreo);
                 std::cout << "\n[EXITO] Correo actualizado a " << nuevoCorreo << ".\n";
                 return;
@@ -252,16 +299,105 @@ public:
         }
         std::cout << "\n[ERROR] Materia no encontrada.\n";
     }
-    
-    
-};
 
+    // ========================================================
+    // NUEVOS MÉTODOS PARA SESIONES (Módulo Estudiante)
+    // ========================================================
+
+    void agendarTutoria(std::string idEst, std::string idTut, std::string idMat, std::string fecha) {
+        auto pEst = buscarUsuarioPorId(idEst);
+        auto pTut = buscarUsuarioPorId(idTut);
+        auto mat = buscarMateriaPorId(idMat);
+
+        auto est = std::dynamic_pointer_cast<Estudiante>(pEst);
+        auto tut = std::dynamic_pointer_cast<Tutor>(pTut);
+
+        if (est && tut && mat) {
+            sesiones.push_back(std::make_shared<SesionTutoria>(est, tut, mat, fecha));
+            std::cout << "\n[EXITO] Tutoria agendada correctamente.\n";
+        } else {
+            std::cout << "\n[ERROR] Verifique los IDs y tipos de usuario.\n";
+        }
+    }
+
+    void modificarFechaSesion(std::string idEst, std::string codMat, std::string nuevaFecha) {
+        for (auto& s : sesiones) {
+            if (s->getEstudiante()->getIdBanner() == idEst && s->getMateria()->getCodigo() == codMat) {
+                s->setFecha(nuevaFecha);
+                std::cout << "\n[EXITO] Fecha de tutoria actualizada.\n";
+                return;
+            }
+        }
+        std::cout << "\n[ERROR] No se encontro ninguna tutoria para ese Estudiante y Materia.\n";
+    }
+
+    void cancelarSesion(std::string idEst, std::string codMat) {
+        auto it = std::remove_if(sesiones.begin(), sesiones.end(), [&](std::shared_ptr<SesionTutoria> s) {
+            return s->getEstudiante()->getIdBanner() == idEst && s->getMateria()->getCodigo() == codMat;
+        });
+        if (it != sesiones.end()) {
+            sesiones.erase(it, sesiones.end());
+            std::cout << "\n[EXITO] Tutoria cancelada y eliminada del sistema.\n";
+        } else {
+            std::cout << "\n[ERROR] No se encontro la tutoria especificada.\n";
+        }
+    }
+
+    void listarHistorial() const {
+        std::cout << "\n--- HISTORIAL DE SESIONES ---\n";
+        if (sesiones.empty()) {
+            std::cout << "No hay sesiones registradas.\n";
+        }
+        for (const auto& s : sesiones) {
+            s->imprimirDetalles();
+        }
+    }
+    
+    void verTutoriasDeEstudiante(std::string idEst) {
+    auto usuario = buscarUsuarioPorId(idEst);
+    auto est = std::dynamic_pointer_cast<Estudiante>(usuario);
+    
+    if (!est) {
+        std::cout << "\n[ERROR] No se encontro un estudiante con el ID " << idEst << ".\n";
+        return;
+    }
+    
+    std::cout << "\n--- TUTORIAS DE " << est->getNombre() << " ---\n";
+    bool encontro = false;
+    for (const auto& s : sesiones) {
+        if (s->getEstudiante()->getIdBanner() == idEst) {
+            s->imprimirDetalles();
+            encontro = true;
+        }
+    }
+    if (!encontro) {
+        std::cout << "No tiene tutorias agendadas.\n";
+    }
+	}
+    
+    void listarEstudiantes() const {
+    std::cout << "\n--- ESTUDIANTES REGISTRADOS ---\n";
+    bool hayEstudiantes = false;
+    for (const auto& u : usuarios) {
+        auto est = std::dynamic_pointer_cast<Estudiante>(u);
+        if (est) {
+            est->mostrarPerfil();
+            hayEstudiantes = true;
+        }
+    }
+    if (!hayEstudiantes) {
+        std::cout << "No hay estudiantes registrados.\n";
+    }
+    std::cout << "--------------------------------\n";
+}
+};
 // ==========================================
 // DECLARACIÓN FUNCIÓN MENU ADMINISTRADOR
 // ==========================================
 
 void menuAdministrador(SistemaLearningCenter& sistema);
 void menuEstudiante(SistemaLearningCenter& sistema);
+
 // ==========================================
 // FUNCION PRINCIPAL
 // ==========================================
@@ -278,14 +414,14 @@ int main() {
         std::cout << "       SISTEMA INTEGRADO LEARNING CENTER      \n";
         std::cout << "============================================\n";
         std::cout << "1. Modulo de Estudiante\n";
-        std::cout << "2. Modulo de Tutor\n";
+        std::cout << "2. Modulo de Tutor(Proximamente)\n";
         std::cout << "3. Modulo Administrador\n";
         std::cout << "0. Salir del Sistema\n";
         std::cout << "Seleccione una opcion: ";
         std::cin >> opcionPrincipal;
         
         if (opcionPrincipal == 1) {
-            std::cout << "\n[Entrando al Modulo de Estudiante... (Proximamente)]\n";
+
 
             menuEstudiante(sistema);
         } 
@@ -321,8 +457,9 @@ void menuAdministrador(SistemaLearningCenter& sistema) {
         std::cout << "6. Eliminar materia\n";
         std::cout << "7. Modificar tarifa de un Tutor\n";       
         std::cout << "8. Modificar correo de un Usuario\n";     
-        std::cout << "9. Modificar multiplicador de Materia\n"; 
-        std::cout << "10. Regresar al Menu Principal\n"; // Cambié el texto para que tenga sentido
+        std::cout << "9. Modificar multiplicador de Materia\n";
+        std::cout << "10. Ver estudiantes registrados\n";
+        std::cout << "11. Regresar al Menu Principal\n"; 
         std::cout << "Seleccione una opcion: ";
         std::cin >> opcion;
         
@@ -381,112 +518,69 @@ void menuAdministrador(SistemaLearningCenter& sistema) {
             std::cout << "Ingrese el nuevo multiplicador: "; std::cin >> nuevoMultiplicador;
             sistema.modificarMultiplicadorMateria(codigoBuscar, nuevoMultiplicador);
         }
-        else if (opcion != 10) {
+        else if (opcion == 10) {
+            sistema.listarEstudiantes();
+        }
+        else if (opcion != 11) {
             std::cout << "\nOpcion no valida. Intente nuevamente.\n";
         }
-    } while (opcion != 10);
+    } while (opcion != 11);
 }
+
+
 void menuEstudiante(SistemaLearningCenter& sistema) {
-    int opcion;
-    std::string nom, id, cor, carr, idTut, idMat, fecha;
-    int sem, idSesion;
-
+    int opt;
     do {
-        std::cout << "\n--- BIENVENIDO AL MODULO DE RESERVAS ---" << std::endl;
-        std::cout << "1. Registrarse como Estudiante" << std::endl;
-        std::cout << "2. Ver Catalogo de Materias" << std::endl;
-        std::cout << "3. Agendar Tutoria (Create)" << std::endl;
-        std::cout << "4. Ver Mis Tutorias (Read)" << std::endl;
-        std::cout << "5. Modificar Fecha/Hora (Update)" << std::endl;
-        std::cout << "6. Cancelar Tutoria (Delete)" << std::endl;
-        std::cout << "7. Registrar Nueva Materia (Admin Temporal)" << std::endl;
-        std::cout << "0. Volver al Menu Principal" << std::endl;
-        std::cout << "Seleccione: ";
-        
-        if (!(std::cin >> opcion)) {
-            std::cin.clear(); std::cin.ignore(1000, '\n'); continue;
+        std::cout << "\n--- MODULO ESTUDIANTE ---\n";
+        std::cout << "1. Ver Materias\n";
+        std::cout << "2. Agendar Tutoria\n";
+        std::cout << "3. Modificar Fecha de Tutoria\n";
+        std::cout << "4. Cancelar Tutoria\n";
+        std::cout << "5. Ver mis Sesiones\n";
+        std::cout << "6. Regresar al Menu Principal\n";
+        std::cout << "Opcion: ";
+        std::cin >> opt;
+
+        if (opt == 1) {
+            std::cout << "\n--- MATERIAS DISPONIBLES ---\n";
+            sistema.listarMaterias();
         }
-        std::cin.ignore();
-
-        switch (opcion) {
-            case 1: // Registrarse
-                std::cout << "Nombre: "; std::getline(std::cin, nom);
-                std::cout << "ID Banner: "; std::getline(std::cin, id);
-                std::cout << "Correo: "; std::getline(std::cin, cor);
-                std::cout << "Carrera: "; std::getline(std::cin, carr);
-                std::cout << "Semestre: "; 
-                while(!(std::cin >> sem)){ std::cin.clear(); std::cin.ignore(1000, '\n'); std::cout << "Dato invalido. Semestre: "; }
-                
-                // --- MÉTODOS COMENTADOS HASTA QUE LOS IMPLEMENTES ---
-                // sistema.getUsuarios().push_back(std::make_shared<Estudiante>(nom, id, cor, carr, sem));
-                
-                std::cout << "[OK] (SIMULADO) Estudiante registrado exitosamente." << std::endl;
-                break;
-
-            case 2: // Catálogo
-                // --- MÉTODOS COMENTADOS HASTA QUE LOS IMPLEMENTES ---
-                // sistema.buscarMateriaPorId(""); // Esto es para refrescar si fuera necesario
-                std::cout << "\n--- CATALOGO ACTUAL DE MATERIAS ---" << std::endl;
-                // for(auto& m : sistema.getMaterias()) m->mostrarDatos();
-                
-                std::cout << "(Mostrando catalogo simulado...)" << std::endl;
-                break;
-
-            case 3: // Create
-                std::cout << "Tu ID Estudiante: "; std::getline(std::cin, id);
-                std::cout << "ID Tutor (Prueba: T100): "; std::getline(std::cin, idTut);
-                std::cout << "Codigo Materia (Prueba: MAT101): "; std::getline(std::cin, idMat);
-                std::cout << "Fecha y Hora: "; std::getline(std::cin, fecha);
-                
-                // --- MÉTODOS COMENTADOS HASTA QUE LOS IMPLEMENTES ---
-                // sistema.agendarTutoria(id, idTut, idMat, fecha);
-                
-                std::cout << "[OK] (SIMULADO) Tutoria agendada exitosamente." << std::endl;
-                break;
-
-            case 4: // Read
-                std::cout << "Ingrese su ID para ver sus citas: "; std::getline(std::cin, id);
-                
-                // --- MÉTODOS COMENTADOS HASTA QUE LOS IMPLEMENTES ---
-                // sistema.verMisTutorias(id);
-                
-                std::cout << "(Mostrando tutorias simuladas...)" << std::endl;
-                break;
-
-            case 5: // Update
-                std::cout << "Numero de cita a modificar: "; std::cin >> idSesion; std::cin.ignore();
-                std::cout << "Nueva Fecha/Hora: "; std::getline(std::cin, fecha);
-                
-                // --- MÉTODOS COMENTADOS HASTA QUE LOS IMPLEMENTES ---
-                // sistema.modificarFechaTutoria(idSesion, fecha);
-                
-                std::cout << "[OK] (SIMULADO) Fecha de la tutoria actualizada." << std::endl;
-                break;
-
-            case 6: // Delete
-                std::cout << "Numero de cita a cancelar: "; std::cin >> idSesion;
-                
-                // --- MÉTODOS COMENTADOS HASTA QUE LOS IMPLEMENTES ---
-                // sistema.cancelarTutoria(idSesion);
-                
-                std::cout << "[OK] (SIMULADO) Tutoria cancelada." << std::endl;
-                break;
-
-            case 7: // Auxiliar para añadir materias rápido
-                std::cout << "Nombre Materia: "; std::getline(std::cin, nom);
-                std::cout << "Codigo (ID): "; std::getline(std::cin, id);
-                
-                // --- MÉTODOS COMENTADOS HASTA QUE LOS IMPLEMENTES ---
-                // sistema.getMaterias().push_back(std::make_shared<Materia>(nom, id, 1.0));
-                
-                std::cout << "[OK] (SIMULADO) Materia agregada al catalogo." << std::endl;
-                break;
+        else if (opt == 2) {
+            std::string e, t, m, f;
+            std::cout << "Tu ID Estudiante: ";
+            std::cin >> e;
+            std::cout << "ID Tutor: ";
+            std::cin >> t;
+            std::cout << "Cod Materia: ";
+            std::cin >> m;
+            std::cout << "Fecha: ";
+            std::cin >> f;
+            sistema.agendarTutoria(e, t, m, f);
         }
-        
-        if(opcion != 0) {
-            std::cout << "\nPresione Enter para continuar...";
-            std::cin.ignore(); // Pausa estética de ENTER
+        else if (opt == 3) {
+            std::string e, m, f;
+            std::cout << "Tu ID Estudiante: ";
+            std::cin >> e;
+            std::cout << "Cod Materia de la tutoria: ";
+            std::cin >> m;
+            std::cout << "Nueva Fecha/Hora: ";
+            std::cin >> f;
+            sistema.modificarFechaSesion(e, m, f);
         }
+        else if (opt == 4) {
+            std::string e, m;
+            std::cout << "Tu ID Estudiante: ";
+            std::cin >> e;
+            std::cout << "Cod Materia a cancelar: ";
+            std::cin >> m;
+            sistema.cancelarSesion(e, m);
+        }
+        else if (opt == 5) {
+	    std::string id;
+	    std::cout << "Tu ID Estudiante: ";
+	    std::cin >> id;
+	    sistema.verTutoriasDeEstudiante(id);
+		}
 
-    } while (opcion != 0);
+    } while (opt != 6);
 }

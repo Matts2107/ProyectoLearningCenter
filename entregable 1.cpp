@@ -9,7 +9,7 @@ using namespace std;
 // ==========================================
 // CLASE Materia
 // ==========================================
-class Materia {
+class Materia { 
 private:
     string nombreM;
     string codigoM; 
@@ -21,7 +21,7 @@ public:
     
     void mostrarMateria() const {
         cout << "ID: " << codigoM << " | Nombre: " << nombreM 
-             << " | Mult: " << multiplicador << endl;
+            << " | Mult: " << multiplicador << endl;
     }
     
     string getMateria() const { return nombreM; }

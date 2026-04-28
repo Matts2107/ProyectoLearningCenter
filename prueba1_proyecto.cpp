@@ -21,8 +21,8 @@ public:
     
     void mostrarMateria() const {
         cout << "ID: " << codigoM 
-             << " | Nombre: " << nombreM 
-             << " | Multiplicador: " << multiplicador << "\n";
+            << " | Nombre: " << nombreM 
+            << " | Multiplicador: " << multiplicador << "\n";
     }
     
     string getMateria() const { return nombreM; }
@@ -84,9 +84,9 @@ public:
 
     void mostrarPerfil() const override {
         cout << "ID: " << id_banner 
-             << " | Nombre: " << nombre 
-             << " | Correo: " << correo 
-             << " | Tarifa: $" << tarifaBase << "/h\n";
+            << " | Nombre: " << nombre 
+            << " | Correo: " << correo 
+            << " | Tarifa: $" << tarifaBase << "/h\n";
     }
 };
 
@@ -137,7 +137,7 @@ public:
 
     void imprimirDetalles() const {
         cout << " >> [" << fechaHora << "] " << materia->getMateria() 
-             << " | Tutor: " << tutor->getNombre() << " | Alumno: " << estudiante->getNombre() << endl;
+            << " | Tutor: " << tutor->getNombre() << " | Alumno: " << estudiante->getNombre() << endl;
     }
 };
 

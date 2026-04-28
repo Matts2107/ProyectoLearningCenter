@@ -45,7 +45,7 @@ public:
     Persona(std::string _nombre, std::string _id, std::string _correo) 
         : nombre(_nombre), id_banner(_id), correo(_correo) {}
 
-    // MÃ©todo virtual puro (hace que la clase sea abstracta)
+    // Método virtual puro (hace que la clase sea abstracta)
     virtual void mostrarPerfil() const = 0;
     
     void cambiarCorreo(std::string nuevoCorreo) {
@@ -71,7 +71,7 @@ public:
     void setTarifa(double t) { tarifaBase = t; }
     double getTarifa() const { return tarifaBase; }
     
-    // MÃ©todo virtual para el polimorfismo de pago
+    // Método virtual para el polimorfismo de pago
     virtual double calcularPago(double horas) const {
         return tarifaBase * horas;
     }
@@ -79,7 +79,7 @@ public:
 };
 
 // ==========================================
-// CLASE TUTOR (Herencia MÃºltiple: Persona + Empleado)
+// CLASE TUTOR (Herencia Múltiple: Persona + Empleado)
 // ==========================================
 class Tutor : public Persona, public Empleado {
 private:
@@ -90,7 +90,7 @@ public:
     Tutor(std::string _nom, std::string _id, std::string _cor, double _tarifa)
         : Persona(_nom, _id, _cor), Empleado(_tarifa), horasAcumuladasMes(0.0) {}
 
-    // Polimorfismo: Implementamos el mÃ©todo abstracto de Persona
+    // Polimorfismo: Implementamos el método abstracto de Persona
     void mostrarPerfil() const override {
         std::cout << "ID: " << id_banner 
                   << " | Nombre: " << nombre 
@@ -102,7 +102,7 @@ public:
         std::cout << "\n";
     }
 
-    // Polimorfismo: Sobrescribimos el cÃ¡lculo de pago (Regla del Learning Center)
+    // Polimorfismo: Sobrescribimos el cálculo de pago (Regla del Learning Center)
     double calcularPago(double horas) const override {
         if (horas < 10.0) {
             std::cout << " -> [Alerta] El tutor " << nombre << " tiene menos de 10h. Su pago sera retenido.\n";
@@ -111,7 +111,7 @@ public:
         return tarifaBase * horas;
     }
 
-    // LÃ³gica de negocio para limitar a 60 horas
+    // Lógica de negocio para limitar a 60 horas
     bool registrarHoras(double horas) {
         if (horasAcumuladasMes + horas > 60.0) {
             std::cout << "\n[ALERTA] No se pueden registrar " << horas << "h. Superaria el limite de 60h mensuales.\n";
@@ -141,7 +141,7 @@ public:
     Estudiante(std::string _nom, std::string _id, std::string _cor, std::string _car, int _sem)
         : Persona(_nom, _id, _cor), carrera(_car), semestre(_sem) {}
 
-    // ImplementaciÃ³n del Polimorfismo
+    // Implementación del Polimorfismo
     void mostrarPerfil() const override {
         std::cout << "\n--- PERFIL DEL ESTUDIANTE ---\n";
         std::cout << "Nombre:    " << nombre << std::endl; 
@@ -152,13 +152,13 @@ public:
         std::cout << "-----------------------------" << std::endl;
     }
     
-    // Getters por si necesitas acceder a estos datos mÃ¡s adelante
+    // Getters por si necesitas acceder a estos datos más adelante
     std::string getCarrera() const { return carrera; }
     int getSemestre() const { return semestre; }
 };
 
 // ==========================================
-// CLASE SesiÃ³n TutorÃ­a
+// CLASE Sesión Tutoría
 // ==========================================
 class SesionTutoria {
 private:
@@ -170,7 +170,7 @@ private:
     bool fueCompletada;
 
 public:
-    // Ahora el constructor pide la duraciÃ³n de la sesiÃ³n
+    // Ahora el constructor pide la duración de la sesión
     SesionTutoria(std::shared_ptr<Estudiante> e, std::shared_ptr<Tutor> t, std::shared_ptr<Materia> m, std::string fecha, double duracion)
         : estudiante(e), tutor(t), materia(m), fechaHora(fecha), duracionHoras(duracion), fueCompletada(false) {}
 
@@ -178,6 +178,7 @@ public:
     std::shared_ptr<Estudiante> getEstudiante() const { return estudiante; }
     std::shared_ptr<Materia> getMateria() const { return materia; }
     double getDuracion() const { return duracionHoras; }
+    std::shared_ptr<Tutor> getTutor() const { return tutor; }
     
     void actualizarEstado(bool completada, double nuevaDuracion) {
         fueCompletada = completada;
@@ -195,7 +196,7 @@ public:
 // ==========================================
 class SistemaLearningCenter {
 private:
-    // Almacenamiento polimÃ³rfico de usuarios
+    // Almacenamiento polimórfico de usuarios
     std::vector<std::shared_ptr<Persona>> usuarios;
     std::vector<std::shared_ptr<Materia>> materias;
     // De shared_ptr pasamos a unique_ptr
@@ -204,7 +205,7 @@ private:
 public:
     SistemaLearningCenter() {}
 
-    // MÃ©todos auxiliares de bÃºsqueda - NUEVOS
+    // Métodos auxiliares de búsqueda - NUEVOS
     std::shared_ptr<Persona> buscarUsuarioPorId(std::string id) {
         for (auto& u : usuarios) if (u->getIdBanner() == id) return u;
         return nullptr;
@@ -216,30 +217,47 @@ public:
     }
 
     // Carga inicial de tutores como pediste
-    void inicializarDatosPrueba() {
+   void inicializarDatosPrueba() {
+        // 1. Cargamos los usuarios base
         usuarios.push_back(std::make_shared<Tutor>("Marcelo Diaz", "00123", "marcelo@u.edu", 15.0));
         usuarios.push_back(std::make_shared<Tutor>("Ana Lopez", "00124", "ana@u.edu", 18.5));
         usuarios.push_back(std::make_shared<Estudiante>("Maria Lopez", "00332572", "maria@estudiante.edu", "Medicina", 5));
         usuarios.push_back(std::make_shared<Estudiante>("Carlos Ruiz", "00998877", "carlos@estudiante.edu", "Arquitectura", 2));
+        
+        // 2. Cargamos las materias
         materias.push_back(std::make_shared<Materia>("Calculo Diferencial", "MATH", 2));
         materias.push_back(std::make_shared<Materia>("Fisica", "PHYS101", 3));
         
-        std::cout << "-> Datos de prueba cargados exitosamente.\n";
+        // 3. AGREGAMOS SESIONES PARA MARCELO DIAZ (ID: 00123)
+        // AgendarTutoria pide: (ID_Estudiante, ID_Tutor, Cod_Materia, Fecha, Duracion)
+        
+        std::cout << "\n--- Cargando sesiones de prueba ---" << std::endl;
+        
+        // Sesión 1: Marcelo da Cálculo a Maria (2 horas)
+        agendarTutoria("00332572", "00123", "MATH", "2024-05-10 09:00", 2.0);
+        
+        // Sesión 2: Marcelo da Física a Carlos (1.5 horas)
+        agendarTutoria("00998877", "00123", "PHYS101", "2024-05-12 15:00", 1.5);
+        
+        // Sesión 3: Marcelo da Cálculo a Carlos (1 hora)
+        agendarTutoria("00998877", "00123", "MATH", "2024-05-15 11:00", 1.0);
+
+        std::cout << "-> Datos de prueba y sesiones cargados exitosamente.\n";
     }
 
-    // MÃ©todo para el Administrador (Create Tutor)
+    // Método para el Administrador (Create Tutor)
     void registrarTutor(std::string _nombre, std::string _id, std::string _correo, double _tarifa) {
         usuarios.push_back(std::make_shared<Tutor>(_nombre, _id, _correo, _tarifa));
         std::cout << "\n Tutor '" << _nombre << "' registrado con exito.\n";
     }
     
-    // MÃ©todo para el Administrador (Create Materia)
+    // Método para el Administrador (Create Materia)
     void registrarMateria(std::string _nombreM, std::string _codigoM, int _multiplicador) {
         materias.push_back(std::make_shared<Materia>(_nombreM, _codigoM, _multiplicador));
         std::cout << "\n Materia '" << _nombreM << "' registrada con exito.\n";
     }
 
-    // MÃ©todo para el Administrador (Read Materias)
+    // Método para el Administrador (Read Materias)
     void listarMaterias() const {
         std::cout << "\n--- LISTA DE MATERIAS REGISTRADAS ---\n";
         if (materias.empty()) {
@@ -252,7 +270,7 @@ public:
         std::cout << "------------------------------------\n";
     }
 
-    // MÃ©todo para el Administrador (Read Tutores)
+    // Método para el Administrador (Read Tutores)
     void listarTutores() const {
         std::cout << "\n--- LISTA DE TUTORES REGISTRADOS ---\n";
         
@@ -262,7 +280,7 @@ public:
             // Intentamos convertir (castear) la Persona a un Tutor
             auto tutorPtr = std::dynamic_pointer_cast<Tutor>(u);
             
-            // Si el resultado NO es nullptr, significa que sÃ­ era un Tutor
+            // Si el resultado NO es nullptr, significa que sí era un Tutor
             if (tutorPtr != nullptr) {
                 tutorPtr->mostrarPerfil(); 
                 hayTutores = true;
@@ -276,7 +294,7 @@ public:
     }
 
     // ========================================================
-    // MÃ‰TODOS DELETE (EliminaciÃ³n)
+    // MÉTODOS DELETE (Eliminación)
     // ========================================================
 
     void eliminarTutor(std::string idBorrar) {
@@ -306,7 +324,7 @@ public:
     }
 
     // ========================================================
-    // MÃ‰TODOS UPDATE (ModificaciÃ³n con y sin casteo)
+    // MÉTODOS UPDATE (Modificación con y sin casteo)
     // ========================================================
 
     void modificarTarifaTutor(std::string idBuscar, double nuevaTarifa) {
@@ -349,10 +367,10 @@ public:
     }
 
     // ========================================================
-    // MÃ‰TODOS PARA SESIONES (Adaptados a unique_ptr)
+    // MÉTODOS PARA SESIONES (Adaptados a unique_ptr)
     // ========================================================
 
-    // CORRECCIÃ“N 1: Se usa make_unique y se agregÃ³ 'duracion' para la regla de las 60h
+    // CORRECCIÓN 1: Se usa make_unique y se agregó 'duracion' para la regla de las 60h
     void agendarTutoria(std::string idEst, std::string idTut, std::string idMat, std::string fecha, double duracion) {
         auto pEst = buscarUsuarioPorId(idEst);
         auto pTut = buscarUsuarioPorId(idTut);
@@ -374,7 +392,7 @@ public:
     }
 
     void modificarFechaSesion(std::string idEst, std::string codMat, std::string nuevaFecha) {
-        // CORRECCIÃ“N 2: Se usa auto& para no intentar copiar el unique_ptr
+        // CORRECCIÓN 2: Se usa auto& para no intentar copiar el unique_ptr
         for (auto& s : sesiones) {
             if (s->getEstudiante()->getIdBanner() == idEst && s->getMateria()->getCodigo() == codMat) {
                 s->setFecha(nuevaFecha);
@@ -386,7 +404,7 @@ public:
     }
 
     void cancelarSesion(std::string idEst, std::string codMat) {
-        // CORRECCIÃ“N 3: El lambda recibe el unique_ptr por referencia constante (const std::unique_ptr<SesionTutoria>&)
+        // CORRECCIÓN 3: El lambda recibe el unique_ptr por referencia constante (const std::unique_ptr<SesionTutoria>&)
         auto it = std::remove_if(sesiones.begin(), sesiones.end(), [&](const std::unique_ptr<SesionTutoria>& s) {
             return s->getEstudiante()->getIdBanner() == idEst && s->getMateria()->getCodigo() == codMat;
         });
@@ -401,7 +419,7 @@ public:
 
     void verHistorialSesiones() const {
         std::cout << "\n--- HISTORIAL GLOBAL DE SESIONES ---\n";
-        // CORRECCIÃ“N 4: CambiÃ© 'historialSesiones' por 'sesiones' que es el nombre real de tu vector
+        // CORRECCIÓN 4: Cambié 'historialSesiones' por 'sesiones' que es el nombre real de tu vector
         if (sesiones.empty()) std::cout << "No hay sesiones registradas.\n";
         for (const auto& s : sesiones) {
             s->imprimirDetalles();
@@ -415,7 +433,7 @@ public:
             auto tut = std::dynamic_pointer_cast<Tutor>(u);
             if (tut) {
                 double horas = tut->getHorasAcumuladas();
-                double pago = tut->calcularPago(horas); // AquÃ­ actÃºa el polimorfismo
+                double pago = tut->calcularPago(horas); // Aquí actúa el polimorfismo
                 
                 std::cout << "Tutor: " << tut->getNombre() 
                           << " | Horas: " << horas 
@@ -437,7 +455,7 @@ public:
         std::cout << "\n--- TUTORIAS DE " << est->getNombre() << " ---\n";
         bool encontro = false;
         
-        // CORRECCIÃ“N 5: Se usa const auto& para observar los unique_ptr de forma segura
+        // CORRECCIÓN 5: Se usa const auto& para observar los unique_ptr de forma segura
         for (const auto& s : sesiones) {
             if (s->getEstudiante()->getIdBanner() == idEst) {
                 s->imprimirDetalles();
@@ -464,13 +482,57 @@ public:
         }
         std::cout << "--------------------------------\n";
  }
+ 
+ // ========================================================
+    // MÉTODOS PARA EL MÓDULO TUTOR
+    // ========================================================
+
+    void tutorAgregarMateria(std::string idTut, std::string codMat) {
+        auto tut = std::dynamic_pointer_cast<Tutor>(buscarUsuarioPorId(idTut));
+        auto mat = buscarMateriaPorId(codMat);
+        if (tut && mat) {
+            tut->agregarMateria(mat);
+            std::cout << "[EXITO] Ahora estas habilitado para dar " << mat->getMateria() << ".\n";
+        } else {
+            std::cout << "[ERROR] Materia o Tutor no encontrados.\n";
+        }
+    }
+
+    void verTutoriasDeTutor(std::string idTut) const {
+        std::cout << "\n--- MIS TUTORIAS ASIGNADAS ---\n";
+        bool encontro = false;
+        // Usamos const auto& para observar los unique_ptr de forma segura
+        for (const auto& s : sesiones) {
+            if (s->getTutor()->getIdBanner() == idTut) {
+                s->imprimirDetalles();
+                encontro = true;
+            }
+        }
+        if (!encontro) std::cout << "No tienes tutorias agendadas actualmente.\n";
+    }
+
+    void completarSesionTutor(std::string idTut, std::string idEst, std::string codMat, double duracionReal) {
+        for (auto& s : sesiones) {
+            if (s->getTutor()->getIdBanner() == idTut && 
+                s->getEstudiante()->getIdBanner() == idEst && 
+                s->getMateria()->getCodigo() == codMat) {
+                
+                // Actualizamos el estado a Completada (true) y ajustamos la duración
+                s->actualizarEstado(true, duracionReal);
+                std::cout << "\n[EXITO] Sesion marcada como completada con " << duracionReal << " horas.\n";
+                return;
+            }
+        }
+        std::cout << "\n[ERROR] No se encontro la tutoria especificada.\n";
+    }
 };
 // ==========================================
-// DECLARACIÃ“N FUNCIÃ“N MENU ADMINISTRADOR
+// DECLARACIÓN FUNCIÓN MENU ADMINISTRADOR
 // ==========================================
 
 void menuAdministrador(SistemaLearningCenter& sistema);
 void menuEstudiante(SistemaLearningCenter& sistema);
+void menuTutor(SistemaLearningCenter& sistema);
 
 // ==========================================
 // FUNCION PRINCIPAL
@@ -482,7 +544,7 @@ int main() {
     
     int opcionPrincipal;
     
-    // 2. MenÃº Principal
+    // 2. Menú Principal
     do {
         std::cout << "\n============================================\n";
         std::cout << "       SISTEMA INTEGRADO LEARNING CENTER      \n";
@@ -501,7 +563,8 @@ int main() {
         } 
         else if (opcionPrincipal == 2) {
             std::cout << "\n[Entrando al Modulo de Tutor... (Proximamente)]\n";
-            // Cuando lo programes, llamarÃ¡s a algo como: menuTutor(sistema);
+			
+			menuTutor(sistema);
         } 
         else if (opcionPrincipal == 3) {
         	
@@ -513,7 +576,7 @@ int main() {
         
     } while (opcionPrincipal != 0);
     
-    std::cout << "\nSaliendo del sistema. Â¡Hasta pronto!\n";
+    std::cout << "\nSaliendo del sistema. ¡Hasta pronto!\n";
     return 0;
 }
 
@@ -621,6 +684,7 @@ void menuEstudiante(SistemaLearningCenter& sistema) {
         }
         else if (opt == 2) {
             std::string e, t, m, f;
+            int g;
             std::cout << "Tu ID Estudiante: ";
             std::cin >> e;
             std::cout << "ID Tutor: ";
@@ -629,7 +693,9 @@ void menuEstudiante(SistemaLearningCenter& sistema) {
             std::cin >> m;
             std::cout << "Fecha: ";
             std::cin >> f;
-            sistema.agendarTutoria(e, t, m, f);
+            std::cout<< "duración";
+            std::cin>>g;
+            sistema.agendarTutoria(e, t, m, f, g);
         }
         else if (opt == 3) {
             std::string e, m, f;
@@ -657,4 +723,61 @@ void menuEstudiante(SistemaLearningCenter& sistema) {
 		}
 
     } while (opt != 6);
+}
+
+void menuTutor(SistemaLearningCenter& sistema) {
+    std::string miId;
+    std::cout << "\n=== INGRESO AL PORTAL DE TUTORES ===\n";
+    std::cout << "Ingrese su ID Banner para continuar: ";
+    std::cin >> miId;
+
+    // Validamos que el usuario exista y sea de tipo Tutor
+    auto usuario = sistema.buscarUsuarioPorId(miId);
+    auto tutor = std::dynamic_pointer_cast<Tutor>(usuario);
+
+    if (!tutor) {
+        std::cout << "[ERROR] Acceso denegado. ID incorrecto o no pertenece a un Tutor.\n";
+        return;
+    }
+
+    int opcion;
+    do {
+        std::cout << "\n========== PANEL DEL TUTOR: " << tutor->getNombre() << " ==========\n";
+        std::cout << "1. Ver mi perfil y horas acumuladas en el mes\n";
+        std::cout << "2. Agregar nueva materia a mi catalogo de ensenanza\n";
+        std::cout << "3. Ver mi lista de tutorias agendadas\n";
+        std::cout << "4. Marcar tutoria como Completada y registrar duracion\n";
+        std::cout << "0. Cerrar Sesion (Regresar al Menu Principal)\n";
+        std::cout << "========================================================\n";
+        std::cout << "Seleccione una opcion: ";
+        std::cin >> opcion;
+
+        if (opcion == 1) {
+            std::cout << "\n--- MI PERFIL PROFESIONAL ---\n";
+            tutor->mostrarPerfil();
+        } 
+        else if (opcion == 2) {
+            std::string codMat;
+            std::cout << "\n--- AGREGAR MATERIA ---\n";
+            std::cout << "Ingrese el codigo de la Materia que desea ensenar: ";
+            std::cin >> codMat;
+            sistema.tutorAgregarMateria(miId, codMat);
+        } 
+        else if (opcion == 3) {
+            sistema.verTutoriasDeTutor(miId);
+        } 
+        else if (opcion == 4) {
+            std::string idEst, codMat;
+            double duracionReal;
+            std::cout << "\n--- REGISTRAR CUMPLIMIENTO DE TUTORIA ---\n";
+            std::cout << "ID del Estudiante que asistio: ";
+            std::cin >> idEst;
+            std::cout << "Codigo de la materia dada: ";
+            std::cin >> codMat;
+            std::cout << "Duracion real impartida (ej. 1.5): ";
+            std::cin >> duracionReal;
+            
+            sistema.completarSesionTutor(miId, idEst, codMat, duracionReal);
+        }
+    } while (opcion != 0);
 }

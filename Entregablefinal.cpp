@@ -537,7 +537,7 @@ int main() {
     
     int opcionPrincipal;
     
-    // 2. Men� Principal
+    // 2. Menu Principal
     do {
         std::cout << "\n============================================\n";
         std::cout << "       SISTEMA INTEGRADO LEARNING CENTER      \n";
@@ -686,7 +686,7 @@ void menuEstudiante(SistemaLearningCenter& sistema) {
             std::cin >> m;
             std::cout << "Fecha: ";
             std::cin >> f;
-            std::cout<< "duracion";
+            std::cout<< "duracion: ";
             std::cin>>g;
             sistema.agendarTutoria(e, t, m, f, g);
         }
@@ -715,7 +715,13 @@ void menuEstudiante(SistemaLearningCenter& sistema) {
 	    sistema.verTutoriasDeEstudiante(id);
 		}
 
-    } while (opt != 6);
+        else{
+            std:: cout << ">> [ERROR] Opcion no valida. Ingrese un numero entre 1 y 6.\n";
+        }
+
+        
+
+    } while (opt != 6); 
 }
 
 void menuTutor(SistemaLearningCenter& sistema) {
@@ -771,6 +777,9 @@ void menuTutor(SistemaLearningCenter& sistema) {
             std::cin >> duracionReal;
             
             sistema.completarSesionTutor(miId, idEst, codMat, duracionReal);
+        }
+        else{
+            std:: cout << ">> [ERROR] Opcion no valida. Ingrese un numero entre 1 y 4.\n";
         }
     } while (opcion != 0);
 }

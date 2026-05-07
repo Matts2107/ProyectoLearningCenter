@@ -19,8 +19,8 @@ public:
     
     void mostrarMateria() const {
         std::cout << "ID: " << codigoM 
-                  << " | Nombre: " << nombreM 
-                  << " | Multiplicador: " << multiplicador << "\n";
+                << " | Nombre: " << nombreM 
+                << " | Multiplicador: " << multiplicador << "\n";
     }
     
     std::string getMateria() const { return nombreM; }
@@ -93,9 +93,9 @@ public:
     // Polimorfismo: Implementamos el metodo abstracto de Persona
     void mostrarPerfil() const override {
         std::cout << "ID: " << id_banner 
-                  << " | Nombre: " << nombre 
-                  << " | Correo: " << correo 
-                  << " | Tarifa: $" << tarifaBase << "/h | Horas mes: " << horasAcumuladasMes << "\n";
+                << " | Nombre: " << nombre 
+                << " | Correo: " << correo 
+                << " | Tarifa: $" << tarifaBase << "/h | Horas mes: " << horasAcumuladasMes << "\n";
         std::cout << "  Materias habilitadas: ";
         if (materiasHabilitadas.empty()) std::cout << "Ninguna";
         for (const auto& m : materiasHabilitadas) std::cout << "[" << m->getMateria() << "] ";
@@ -187,8 +187,8 @@ public:
 
     void imprimirDetalles() const {
         std::cout << " >> [" << fechaHora << "] " << materia->getMateria() 
-                  << " | Tutor: " << tutor->getNombre() << " | Alumno: " << estudiante->getNombre() 
-                  << " | Duracion: " << duracionHoras << "h | Estado: " << (fueCompletada ? "Completada" : "Pendiente") << std::endl;
+                << " | Tutor: " << tutor->getNombre() << " | Alumno: " << estudiante->getNombre() 
+                << " | Duracion: " << duracionHoras << "h | Estado: " << (fueCompletada ? "Completada" : "Pendiente") << std::endl;
     }
 };
 // ==========================================
@@ -216,7 +216,7 @@ public:
     }
 
     // Carga inicial de tutores como pediste
-   void inicializarDatosPrueba() {
+        void inicializarDatosPrueba() {
         // 1. Cargamos los usuarios base
         usuarios.push_back(std::make_shared<Tutor>("Marcelo Diaz", "00123", "marcelo@u.edu", 15.0));
         usuarios.push_back(std::make_shared<Tutor>("Ana Lopez", "00124", "ana@u.edu", 18.5));
@@ -358,7 +358,7 @@ public:
             if (m->getCodigo() == codigoBuscar) {
                 m->setMultiplicador(nuevoMultiplicador);
                 std::cout << "\n[EXITO] El multiplicador de la materia " << m->getMateria() 
-                          << " se actualizo a " << nuevoMultiplicador << ".\n";
+                        << " se actualizo a " << nuevoMultiplicador << ".\n";
                 return;
             }
         }
@@ -431,8 +431,8 @@ public:
                 double pago = tut->calcularPago(horas); 
                 
                 std::cout << "Tutor: " << tut->getNombre() 
-                          << " | Horas: " << horas 
-                          << " | Pago Total: $" << pago << "\n";
+                        << " | Horas: " << horas 
+                        << " | Pago Total: $" << pago << "\n";
             }
         }
         std::cout << "===============================================\n";
